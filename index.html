@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Tap Master Pro</title>
+    
+    <!-- iOS Web App Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Tap Master">
+    <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyNpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQ4IDc5LjE2NDAzNiwgMjAxOS8wOC8xMy0wMTowNjo1NyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDIxLjAgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjY5NjdEOTM1QTY4MTExRUE5QjlGRTg2NzAwMDAwMDAwIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjY5NjdEOTM2QTY4MTExRUE5QjlGRTg2NzAwMDAwMDAwIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6Njk2N0Q5MzNBNjgxMTFFQTlCOUZFODY3MDAwMDAwMDAiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6Njk2N0Q5MzRBNjgxMTFFQTlCOUZFODY3MDAwMDAwMDAiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4=">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="src/css/main.css">
+</head>
+<body>
+    <div id="gameContainer">
+        <!-- Main Menu Screen -->
+        <div id="mainMenuScreen" class="screen active">
+            <div class="container">
+                <h1 class="game-title">Tap Master Pro</h1>
+                <button class="menu-button" onclick="showLevelSelection()">Play Game</button>
+                <button class="menu-button" onclick="showTutorial()">How to Play</button>
+                <button class="menu-button" onclick="showHighScores()">High Scores</button>
+            </div>
+        </div>
+
+        <!-- Level Selection Screen -->
+        <div id="levelSelectionScreen" class="screen">
+            <div class="container">
+                <h2 class="game-title">Select Level</h2>
+                <div class="level-grid" id="levelGrid"></div>
+                <button class="menu-button" onclick="showMainMenu()">Back</button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="screen">
+            <div class="hud">
+                <div class="hud-item">
+                    <div class="hud-label">SCORE</div>
+                    <div class="hud-value" id="score">0</div>
+                </div>
+                <div class="hud-item">
+                    <div class="hud-label">LEVEL</div>
+                    <div class="hud-value" id="level">1</div>
+                </div>
+                <div class="hud-item">
+                    <div class="hud-label">TIME</div>
+                    <div class="hud-value" id="timer">30</div>
+                </div>
+                <div class="hud-item">
+                    <div class="hud-label">GOAL</div>
+                    <div class="hud-value" id="goal">0/10</div>
+                </div>
+            </div>
+            <div class="goal-progress">
+                <div class="goal-bar" id="goalBar"></div>
+            </div>
+            <div id="playArea"></div>
+        </div>
+
+        <!-- Level Complete Screen -->
+        <div id="levelCompleteScreen" class="screen">
+            <div class="container">
+                <h2 class="game-title">Level Complete!</h2>
+                <div class="score-display">Score: <span id="levelScore">0</span></div>
+                <div class="goal-display">Goal Reached: <span id="goalReached">0/0</span></div>
+                <button class="menu-button" onclick="nextLevel()">Next Level</button>
+                <button class="menu-button" onclick="retryLevel()">Retry Level</button>
+                <button class="menu-button" onclick="showLevelSelection()">Level Select</button>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameOverScreen" class="screen">
+            <div class="container">
+                <h2 class="game-title">Game Over!</h2>
+                <div class="score-display">Final Score: <span id="finalScore">0</span></div>
+                <button class="menu-button" onclick="retryLevel()">Try Again</button>
+                <button class="menu-button" onclick="showLevelSelection()">Level Select</button>
+                <button class="menu-button" onclick="showMainMenu()">Main Menu</button>
+            </div>
+        </div>
+
+        <!-- Tutorial Screen -->
+        <div id="tutorialScreen" class="screen">
+            <div class="container">
+                <h2 class="game-title">How to Play</h2>
+                <div style="text-align: left; margin: 20px 0;">
+                    <p>🟢 Green Balls: +1 Point</p>
+                    <p>🔵 Blue Balls: +5 Seconds</p>
+                    <p>🟡 Yellow Balls: -3 Seconds</p>
+                    <p>🔴 Red Balls: Game Over!</p>
+                    <p style="margin-top: 20px;">Complete the goal to advance to the next level!</p>
+                </div>
+                <button class="menu-button" onclick="showMainMenu()">Got it!</button>
+            </div>
+        </div>
+
+        <!-- High Scores Screen -->
+        <div id="highScoresScreen" class="screen">
+            <div class="container">
+                <h2 class="game-title">High Scores</h2>
+                <div id="highScoresList" class="scores-list"></div>
+                <button class="menu-button" onclick="showMainMenu()">Back</button>
+                <button class="menu-button reset-button" onclick="resetHighScores()">Reset Scores</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="src/js/app.js"></script>
+</body>
+</html>
