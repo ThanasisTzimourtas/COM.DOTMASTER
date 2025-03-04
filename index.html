@@ -59,6 +59,7 @@
                 <div class="goal-bar" id="goalBar"></div>
             </div>
             <div id="playArea"></div>
+            <button class="pause-button" onclick="showPauseMenu()">⏸️</button>
         </div>
 
         <!-- Level Complete Screen -->
@@ -94,6 +95,7 @@
                     <p>🟡 Yellow Balls: -3 Seconds</p>
                     <p>🔴 Red Balls: Game Over!</p>
                     <p style="margin-top: 20px;">Complete the goal to advance to the next level!</p>
+                    <p>Press ESC key anytime to pause the game.</p>
                 </div>
                 <button class="menu-button" onclick="showMainMenu()">Got it!</button>
             </div>
@@ -106,6 +108,17 @@
                 <div id="highScoresList" class="scores-list"></div>
                 <button class="menu-button" onclick="showMainMenu()">Back</button>
                 <button class="menu-button reset-button" onclick="resetHighScores()">Reset Scores</button>
+            </div>
+        </div>
+
+        <!-- Pause Menu Screen -->
+        <div id="pauseMenuScreen" class="screen">
+            <div class="container">
+                <h2 class="game-title">Game Paused</h2>
+                <button class="menu-button" onclick="resumeGame()">Resume Game</button>
+                <button class="menu-button" onclick="restartLevel()">Restart Level</button>
+                <button class="menu-button" onclick="showLevelSelection()">Level Select</button>
+                <button class="menu-button" onclick="showMainMenu()">Main Menu</button>
             </div>
         </div>
     </div>

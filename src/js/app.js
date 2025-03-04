@@ -28,6 +28,9 @@ const gameState = {
     }
 };
 
+// Paused state
+let isPaused = false;
+
 // Sound Effects
 const sounds = {
     pop: new Audio('data:audio/wav;base64,UklGRn4AAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YVoAAAAAAA=='),
@@ -48,6 +51,8 @@ function showScreen(screenId) {
 function showMainMenu() {
     clearInterval(gameState.gameInterval);
     clearInterval(gameState.dangerInterval);
+    gameState.isPlaying = false;
+    isPaused = false;
     showScreen('mainMenuScreen');
 }
 
@@ -139,11 +144,13 @@ function startTimer() {
 
     const timerDisplay = document.getElementById('timer');
     gameState.gameInterval = setInterval(() => {
-        gameState.timeLeft--;
-        timerDisplay.textContent = gameState.timeLeft;
-        
-        if (gameState.timeLeft <= 0) {
-            gameOver();
+        if (!isPaused) {
+            gameState.timeLeft--;
+            timerDisplay.textContent = gameState.timeLeft;
+            
+            if (gameState.timeLeft <= 0) {
+                gameOver();
+            }
         }
     }, 1000);
 }
@@ -163,6 +170,7 @@ function gameOver() {
     clearInterval(gameState.gameInterval);
     clearInterval(gameState.dangerInterval);
     gameState.isPlaying = false;
+    isPaused = false;
 
     document.getElementById('finalScore').textContent = gameState.score;
     showScreen('gameOverScreen');
@@ -191,6 +199,7 @@ function levelComplete() {
     clearInterval(gameState.gameInterval);
     clearInterval(gameState.dangerInterval);
     gameState.isPlaying = false;
+    isPaused = false;
     
     if (gameState.level >= gameState.unlockedLevels) {
         gameState.unlockedLevels = Math.min(gameState.level + 1, gameState.maxLevels);
@@ -222,6 +231,36 @@ function levelComplete() {
     showScreen('levelCompleteScreen');
 }
 
+// Pause Game Functions
+function showPauseMenu() {
+    isPaused = true;
+    clearInterval(gameState.gameInterval);
+    clearInterval(gameState.dangerInterval);
+    showScreen('pauseMenuScreen');
+}
+
+function resumeGame() {
+    isPaused = false;
+    startTimer();
+    
+    // Restart danger interval if needed
+    if (gameState.level > 1) {
+        if (gameState.dangerInterval) {
+            clearInterval(gameState.dangerInterval);
+        }
+        gameState.dangerInterval = setInterval(() => {
+            if (Math.random() < 0.7 && !isPaused) createBall('danger');
+        }, LEVEL_CONFIG.getDangerBallInterval(gameState.level));
+    }
+    
+    showScreen('gameScreen');
+}
+
+function restartLevel() {
+    isPaused = false;
+    startGame(gameState.level);
+}
+
 // Game Initialization
 function initGame() {
     // Load saved data
@@ -244,12 +283,25 @@ function initGame() {
         event.preventDefault();
     }, { passive: false });
 
+    // Add keyboard event listener for ESC key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            if (gameState.isPlaying) {
+                if (isPaused) {
+                    resumeGame();
+                } else {
+                    showPauseMenu();
+                }
+            }
+        }
+    });
+
     showMainMenu();
 }
 
 // Ball Creation and Management
 function createBall(type = 'normal') {
-    if (!gameState.isPlaying) return null;
+    if (!gameState.isPlaying || isPaused) return null;
 
     const ball = document.createElement('div');
     const playArea = document.getElementById('playArea');
@@ -316,7 +368,7 @@ function moveBall(ball) {
     let dy = (Math.random() - 0.5) * speed;
 
     function animate() {
-        if (!gameState.isPlaying || !ball.parentElement) return;
+        if (!gameState.isPlaying || isPaused || !ball.parentElement) return;
 
         const playArea = document.getElementById('playArea');
         const rect = playArea.getBoundingClientRect();
@@ -340,7 +392,7 @@ function moveBall(ball) {
 
 // Ball Interaction
 function handleBallClick(ball) {
-    if (!gameState.isPlaying) return;
+    if (!gameState.isPlaying || isPaused) return;
 
     const type = ball.dataset.type;
     const rect = ball.getBoundingClientRect();
@@ -413,6 +465,7 @@ function startGame(level) {
     gameState.balls = [];
     gameState.currentGoal = LEVEL_CONFIG.getLevelGoal(level);
     gameState.goalProgress = 0;
+    isPaused = false;
 
     // Update UI
     document.getElementById('score').textContent = '0';
@@ -432,7 +485,7 @@ function startGame(level) {
     // Danger balls for higher levels
     if (level > 1) {
         gameState.dangerInterval = setInterval(() => {
-            if (Math.random() < 0.7) createBall('danger');
+            if (Math.random() < 0.7 && !isPaused) createBall('danger');
         }, LEVEL_CONFIG.getDangerBallInterval(level));
     }
 
