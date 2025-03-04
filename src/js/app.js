@@ -249,7 +249,7 @@ function resumeGame() {
             clearInterval(gameState.dangerInterval);
         }
         gameState.dangerInterval = setInterval(() => {
-            if (Math.random() < 0.7 && !isPaused) createBall('danger');
+            if (Math.random() < 0.7) createBall('danger');
         }, LEVEL_CONFIG.getDangerBallInterval(gameState.level));
     }
     
@@ -366,28 +366,46 @@ function moveBall(ball) {
     const speed = LEVEL_CONFIG.getBallSpeed(gameState.level);
     let dx = (Math.random() - 0.5) * speed;
     let dy = (Math.random() - 0.5) * speed;
+    let animationId = null;
+    
+    // Store the animate function and dx/dy values on the ball element
+    ball.animateFunction = animate;
+    ball.dx = dx;
+    ball.dy = dy;
 
     function animate() {
-        if (!gameState.isPlaying || isPaused || !ball.parentElement) return;
+        if (!gameState.isPlaying || !ball.parentElement) return;
+        
+        // Only update position if not paused
+        if (!isPaused) {
+            const playArea = document.getElementById('playArea');
+            const rect = playArea.getBoundingClientRect();
+            const ballRect = ball.getBoundingClientRect();
 
-        const playArea = document.getElementById('playArea');
-        const rect = playArea.getBoundingClientRect();
-        const ballRect = ball.getBoundingClientRect();
+            let x = ballRect.left - rect.left + dx;
+            let y = ballRect.top - rect.top + dy;
 
-        let x = ballRect.left - rect.left + dx;
-        let y = ballRect.top - rect.top + dy;
+            // Wall bouncing
+            if (x <= 0 || x >= rect.width - ballRect.width) dx = -dx;
+            if (y <= 0 || y >= rect.height - ballRect.height) dy = -dy;
 
-        // Wall bouncing
-        if (x <= 0 || x >= rect.width - ballRect.width) dx = -dx;
-        if (y <= 0 || y >= rect.height - ballRect.height) dy = -dy;
+            ball.style.left = `${Math.max(0, Math.min(x, rect.width - ballRect.width))}px`;
+            ball.style.top = `${Math.max(0, Math.min(y, rect.height - ballRect.height))}px`;
+            
+            // Update dx/dy on the ball element in case they changed due to bouncing
+            ball.dx = dx;
+            ball.dy = dy;
+        }
 
-        ball.style.left = `${Math.max(0, Math.min(x, rect.width - ballRect.width))}px`;
-        ball.style.top = `${Math.max(0, Math.min(y, rect.height - ballRect.height))}px`;
-
-        requestAnimationFrame(animate);
+        // Always request the next frame, even when paused
+        animationId = requestAnimationFrame(animate);
     }
 
-    animate();
+    // Start animation
+    animationId = requestAnimationFrame(animate);
+    
+    // Store the animation ID on the ball element so we can cancel it if needed
+    ball.animationId = animationId;
 }
 
 // Ball Interaction
